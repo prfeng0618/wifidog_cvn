@@ -295,10 +295,18 @@ iptables_fw_init(void)
 	iptables_do_command("-t mangle -N " TABLE_WIFIDOG_OUTGOING);
 	iptables_do_command("-t mangle -N " TABLE_WIFIDOG_INCOMING);
 
+	/* begin: [pengruofeng  2015-7-6]  fix portal interface ra0 */
 	/* Assign links and rules to these new chains */
+	#if 0
 	iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_OUTGOING, config->gw_interface);
 	iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_TRUSTED, config->gw_interface);//this rule will be inserted before the prior one
 	iptables_do_command("-t mangle -I POSTROUTING 1 -o %s -j " TABLE_WIFIDOG_INCOMING, config->gw_interface);
+	#else
+	iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_OUTGOING, WIFIDOG_PORTAL_INTERFACE_NAME);
+	iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_TRUSTED, WIFIDOG_PORTAL_INTERFACE_NAME);//this rule will be inserted before the prior one
+	iptables_do_command("-t mangle -I POSTROUTING 1 -o %s -j " TABLE_WIFIDOG_INCOMING, WIFIDOG_PORTAL_INTERFACE_NAME);
+	#endif
+	/* end:  */
 
 	for (p = config->trustedmaclist; p != NULL; p = p->next)
 		iptables_do_command("-t mangle -A " TABLE_WIFIDOG_TRUSTED " -m mac --mac-source %s -j MARK --set-mark %d", p->mac, FW_MARK_KNOWN);
@@ -317,8 +325,14 @@ iptables_fw_init(void)
 	iptables_do_command("-t nat -N " TABLE_WIFIDOG_UNKNOWN);
 	iptables_do_command("-t nat -N " TABLE_WIFIDOG_AUTHSERVERS);
 
+	/* begin: [pengruofeng	2015-7-6]  fix portal interface ra0 */
 	/* Assign links and rules to these new chains */
+	#if 0
 	iptables_do_command("-t nat -A PREROUTING -i %s -j " TABLE_WIFIDOG_OUTGOING, config->gw_interface);
+	#else
+	iptables_do_command("-t nat -A PREROUTING -i %s -j " TABLE_WIFIDOG_OUTGOING, WIFIDOG_PORTAL_INTERFACE_NAME);
+	#endif
+	/* end:  */
 
 	iptables_do_command("-t nat -A " TABLE_WIFIDOG_OUTGOING " -d %s -j " TABLE_WIFIDOG_WIFI_TO_ROUTER, config->gw_address);
 	iptables_do_command("-t nat -A " TABLE_WIFIDOG_WIFI_TO_ROUTER " -j ACCEPT");
@@ -350,9 +364,14 @@ iptables_fw_init(void)
 
 	/* Assign links and rules to these new chains */
 
+	/* begin: [pengruofeng	2015-7-6]  fix portal interface ra0 */
 	/* Insert at the beginning */
+	#if 0
 	iptables_do_command("-t filter -I FORWARD -i %s -j " TABLE_WIFIDOG_WIFI_TO_INTERNET, config->gw_interface);
-
+	#else
+	iptables_do_command("-t filter -I FORWARD -i %s -j " TABLE_WIFIDOG_WIFI_TO_INTERNET, WIFIDOG_PORTAL_INTERFACE_NAME);
+	#endif
+	/* end: */
 
 	iptables_do_command("-t filter -A " TABLE_WIFIDOG_WIFI_TO_INTERNET " -m state --state INVALID -j DROP");
 

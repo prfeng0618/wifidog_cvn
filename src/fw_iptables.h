@@ -44,6 +44,12 @@
 #define TABLE_WIFIDOG_TRUSTED    "WiFiDog_$ID$_Trusted"
 /*@}*/ 
 
+
+/* begin: [pengruofeng  2015-7-6]  fix portal interface ra0 */
+#define WIFIDOG_PORTAL_INTERFACE_NAME  "*ra0"
+/* end:  */
+
+
 /** Used by iptables_fw_access to select if the client should be granted of denied access */
 typedef enum fw_access_t_ {
     FW_ACCESS_ALLOW,
