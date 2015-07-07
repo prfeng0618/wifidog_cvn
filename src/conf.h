@@ -156,8 +156,14 @@ typedef struct {
 				     logging */
     t_firewall_ruleset	*rulesets;	/**< @brief firewall rules */
     t_trusted_mac *trustedmaclist; /**< @brief list of trusted macs */
-	//pengruofeng  kick clinent [2014-12-3] 
+	
+	/* [ pengruofeng 2014-12-3] pengruofeng  kick clinent	*/
 	int kickclienttime;	/**< @brief kick client time out */
+	/* [pengruofeng 2015-7-6]  set bridge port	*/
+	char *bridgeinterface1; 
+	char *bridgeinterface2;
+	char *bridgeinterface3;
+	char *bridgeinterface4;
 } s_config;
 
 /** @brief Get the current gateway configuration */

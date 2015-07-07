@@ -266,6 +266,7 @@ iptables_fw_init(void)
 	const s_config *config;
 	char * ext_interface = NULL;
 	int gw_port = 0;
+	int i = 0;
 	t_trusted_mac *p;
 
 	fw_quiet = 0;
@@ -302,9 +303,35 @@ iptables_fw_init(void)
 	iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_TRUSTED, config->gw_interface);//this rule will be inserted before the prior one
 	iptables_do_command("-t mangle -I POSTROUTING 1 -o %s -j " TABLE_WIFIDOG_INCOMING, config->gw_interface);
 	#else
-	iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_OUTGOING, WIFIDOG_PORTAL_INTERFACE_NAME);
-	iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_TRUSTED, WIFIDOG_PORTAL_INTERFACE_NAME);//this rule will be inserted before the prior one
-	iptables_do_command("-t mangle -I POSTROUTING 1 -o %s -j " TABLE_WIFIDOG_INCOMING, WIFIDOG_PORTAL_INTERFACE_NAME);
+
+	if(config->bridgeinterface1){
+		iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_OUTGOING, config->bridgeinterface1);
+		iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_TRUSTED, config->bridgeinterface1);//this rule will be inserted before the prior one
+		iptables_do_command("-t mangle -I POSTROUTING 1 -o %s -j " TABLE_WIFIDOG_INCOMING, config->bridgeinterface1);
+	} 
+	if(config->bridgeinterface2){
+		iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_OUTGOING, config->bridgeinterface2);
+		iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_TRUSTED, config->bridgeinterface2);//this rule will be inserted before the prior one
+		iptables_do_command("-t mangle -I POSTROUTING 1 -o %s -j " TABLE_WIFIDOG_INCOMING, config->bridgeinterface2);
+	} 
+	if(config->bridgeinterface3){
+		iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_OUTGOING, config->bridgeinterface3);
+		iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_TRUSTED, config->bridgeinterface3);//this rule will be inserted before the prior one
+		iptables_do_command("-t mangle -I POSTROUTING 1 -o %s -j " TABLE_WIFIDOG_INCOMING, config->bridgeinterface3);
+	} 
+	if(config->bridgeinterface4){
+		iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_OUTGOING, config->bridgeinterface4);
+		iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_TRUSTED, config->bridgeinterface4);//this rule will be inserted before the prior one
+		iptables_do_command("-t mangle -I POSTROUTING 1 -o %s -j " TABLE_WIFIDOG_INCOMING, config->bridgeinterface4);
+	} 
+
+	if((config->bridgeinterface1||config->bridgeinterface2
+		||config->bridgeinterface3||config->bridgeinterface4) == NULL)
+	{
+		iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_OUTGOING, WIFIDOG_PORTAL_INTERFACE_NAME);
+		iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " TABLE_WIFIDOG_TRUSTED, WIFIDOG_PORTAL_INTERFACE_NAME);//this rule will be inserted before the prior one
+		iptables_do_command("-t mangle -I POSTROUTING 1 -o %s -j " TABLE_WIFIDOG_INCOMING, WIFIDOG_PORTAL_INTERFACE_NAME);
+	}
 	#endif
 	/* end:  */
 
@@ -330,7 +357,24 @@ iptables_fw_init(void)
 	#if 0
 	iptables_do_command("-t nat -A PREROUTING -i %s -j " TABLE_WIFIDOG_OUTGOING, config->gw_interface);
 	#else
-	iptables_do_command("-t nat -A PREROUTING -i %s -j " TABLE_WIFIDOG_OUTGOING, WIFIDOG_PORTAL_INTERFACE_NAME);
+	if(config->bridgeinterface1){
+		iptables_do_command("-t nat -A PREROUTING -i %s -j " TABLE_WIFIDOG_OUTGOING, config->bridgeinterface1);
+	} 
+	if(config->bridgeinterface2){
+		iptables_do_command("-t nat -A PREROUTING -i %s -j " TABLE_WIFIDOG_OUTGOING, config->bridgeinterface2);
+	}  
+	if(config->bridgeinterface3){
+		iptables_do_command("-t nat -A PREROUTING -i %s -j " TABLE_WIFIDOG_OUTGOING, config->bridgeinterface3);
+	} 
+	if(config->bridgeinterface4){
+		iptables_do_command("-t nat -A PREROUTING -i %s -j " TABLE_WIFIDOG_OUTGOING, config->bridgeinterface4);
+	}
+	
+	if((config->bridgeinterface1||config->bridgeinterface2
+		||config->bridgeinterface3||config->bridgeinterface4) == NULL)
+	{
+		iptables_do_command("-t nat -A PREROUTING -i %s -j " TABLE_WIFIDOG_OUTGOING, WIFIDOG_PORTAL_INTERFACE_NAME);
+	}
 	#endif
 	/* end:  */
 
@@ -369,7 +413,24 @@ iptables_fw_init(void)
 	#if 0
 	iptables_do_command("-t filter -I FORWARD -i %s -j " TABLE_WIFIDOG_WIFI_TO_INTERNET, config->gw_interface);
 	#else
-	iptables_do_command("-t filter -I FORWARD -i %s -j " TABLE_WIFIDOG_WIFI_TO_INTERNET, WIFIDOG_PORTAL_INTERFACE_NAME);
+	if(config->bridgeinterface1){
+		iptables_do_command("-t filter -I FORWARD -i %s -j " TABLE_WIFIDOG_WIFI_TO_INTERNET, config->bridgeinterface1);
+	} 
+	if(config->bridgeinterface2){
+		iptables_do_command("-t filter -I FORWARD -i %s -j " TABLE_WIFIDOG_WIFI_TO_INTERNET, config->bridgeinterface2);
+	} 
+	if(config->bridgeinterface3){
+		iptables_do_command("-t filter -I FORWARD -i %s -j " TABLE_WIFIDOG_WIFI_TO_INTERNET, config->bridgeinterface3);
+	} 
+	if(config->bridgeinterface4){
+		iptables_do_command("-t filter -I FORWARD -i %s -j " TABLE_WIFIDOG_WIFI_TO_INTERNET, config->bridgeinterface4);
+	} 
+	
+	if((config->bridgeinterface1||config->bridgeinterface2
+		||config->bridgeinterface3||config->bridgeinterface4) == NULL)
+	{
+		iptables_do_command("-t filter -I FORWARD -i %s -j " TABLE_WIFIDOG_WIFI_TO_INTERNET, WIFIDOG_PORTAL_INTERFACE_NAME);
+	}
 	#endif
 	/* end: */
 

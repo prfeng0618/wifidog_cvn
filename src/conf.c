@@ -95,8 +95,13 @@ typedef enum {
 	oFirewallRuleSet,
 	oTrustedMACList,
         oHtmlMessageFile,
-	//pengruofeng  kick clinent [2014-12-3] 
+	/* [ pengruofeng 2014-12-3] pengruofeng  kick clinent   */
 	oKickClientTime,
+	/* [pengruofeng 2015-7-6]  set bridge port	*/
+	oBridgeInterface1,
+	oBridgeInterface2,
+	oBridgeInterface3,
+	oBridgeInterface4,
 
 } OpCodes;
 
@@ -137,8 +142,13 @@ static const struct {
 	{ "firewallrule",		oFirewallRule },
 	{ "trustedmaclist",		oTrustedMACList },
         { "htmlmessagefile",		oHtmlMessageFile },
-    //pengruofeng  kick clinent [2014-12-3] 
+    /* [ pengruofeng 2014-12-3] pengruofeng  kick clinent   */
     { "kickclienttime",		oKickClientTime },
+	/* [pengruofeng 2015-7-6]  set bridge port	*/
+	{ "bridgeinterface1",		oBridgeInterface1 },
+	{ "bridgeinterface2",		oBridgeInterface2 },
+	{ "bridgeinterface3",		oBridgeInterface3 },
+	{ "bridgeinterface4",		oBridgeInterface4 },
 	{ NULL,				oBadOption },
 };
 
@@ -187,8 +197,13 @@ config_init(void)
 	config.internal_sock = safe_strdup(DEFAULT_INTERNAL_SOCK);
 	config.rulesets = NULL;
 	config.trustedmaclist = NULL;
-	//pengruofeng  kick clinent [2014-12-3] 
+	/* [ pengruofeng 2014-12-3] pengruofeng  kick clinent   */
 	config.kickclienttime = DEFAULT_KICKCLIENTTIME;
+	/* [pengruofeng 2015-7-6]  set bridge port	*/
+	config.bridgeinterface1 = NULL;
+	config.bridgeinterface2 = NULL;
+	config.bridgeinterface3 = NULL;
+	config.bridgeinterface4 = NULL;	
 }
 
 /**
@@ -763,11 +778,24 @@ config_read(const char *filename)
 				case oHtmlMessageFile:
 					config.htmlmsgfile = safe_strdup(p1);
 					break;
+				/* [ pengruofeng 2014-12-3] pengruofeng  kick clinent   */ 
 				case oKickClientTime:
-					//pengruofeng  kick clinent [2014-12-3] 
 					sscanf(p1, "%d", &config.kickclienttime);
 					break;
-
+				/* begin : [pengruofeng 2015-7-6]  set bridge port	*/
+				case oBridgeInterface1:
+					config.bridgeinterface1 = safe_strdup(p1);
+					break;
+				case oBridgeInterface2:
+					config.bridgeinterface2 = safe_strdup(p1);
+					break;
+				case oBridgeInterface3:
+					config.bridgeinterface3 = safe_strdup(p1);
+					break;
+				case oBridgeInterface4:
+					config.bridgeinterface4 = safe_strdup(p1);
+					break;
+				/* end: */
 				}
 			}
 		}
